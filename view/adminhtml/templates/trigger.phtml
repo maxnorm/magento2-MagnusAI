@@ -1,0 +1,17 @@
+<?php
+/**
+ * Copyright © Magnus. All rights reserved.
+ * @var \Magnus\Assistant\Block\Adminhtml\Trigger $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$svgUrl = $block->getViewFileUrl('Magnus_Assistant::images/cat-face.svg');
+?>
+<div class="magnus-trigger-wrapper">
+<button type="button" id="magnus-trigger" class="magnus-trigger" title="<?= $escaper->escapeHtmlAttr(__('Open Magnus')) ?>"
+        aria-label="<?= $escaper->escapeHtmlAttr(__('Open Magnus')) ?>">
+    <span class="magnus-trigger-icon" aria-hidden="true">
+        <img src="<?= $escaper->escapeUrl($svgUrl) ?>" alt="<?= $escaper->escapeHtmlAttr(__('MagnusAI')) ?>" />
+    </span>
+    <p class="magnus-trigger-text"><?= $escaper->escapeHtml(__('Magnus AI')) ?></p>
+</button>
+</div>

@@ -1,0 +1,63 @@
+<?php
+/**
+ * Copyright © Magnus. All rights reserved.
+ * @var \Magnus\Assistant\Block\Adminhtml\ChatPanel $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$sendUrl = $block->getSendUrl();
+$historyUrl = $block->getHistoryUrl();
+$listUrl = $block->getListUrl();
+$formKey = $block->getFormKey();
+$svgUrl = $block->getViewFileUrl('Magnus_Assistant::images/cat-face.svg');
+?>
+<div id="magnus-panel-root" class="magnus-panel-root" data-magnus-send-url="<?= $escaper->escapeUrl($sendUrl) ?>"
+     data-magnus-history-url="<?= $escaper->escapeUrl($historyUrl) ?>"
+     data-magnus-list-url="<?= $escaper->escapeUrl($listUrl) ?>"
+     data-magnus-form-key="<?= $escaper->escapeHtmlAttr($formKey) ?>" style="display: none;">
+    <div class="magnus-panel-header">
+        <h3 class="magnus-panel-title">
+            <span class="magnus-trigger-icon" aria-hidden="true">
+                <img src="<?= $escaper->escapeUrl($svgUrl) ?>" alt="" />
+            </span>
+            <span class="magnus-trigger-text"><?= $escaper->escapeHtml(__('Magnus AI')) ?></span>
+        </h3>
+        <div class="magnus-panel-header-actions">
+            <button type="button" class="magnus-past-chats-trigger" id="magnus-past-chats-trigger" aria-label="<?= $escaper->escapeHtmlAttr(__('Past chats')) ?>" aria-expanded="false" title="<?= $escaper->escapeHtmlAttr(__('Past chats')) ?>"><?= $escaper->escapeHtml(__('Past chats')) ?></button>
+            <button type="button" class="magnus-panel-close" id="magnus-panel-close" aria-label="<?= $escaper->escapeHtmlAttr(__('Close')) ?>">&times;</button>
+        </div>
+    </div>
+    <div class="magnus-past-chats-dropdown" id="magnus-past-chats-dropdown" aria-hidden="true">
+        <div class="magnus-past-chats-new"><button type="button" class="magnus-new-chat-btn" id="magnus-new-chat-btn"><?= $escaper->escapeHtml(__('New chat')) ?></button></div>
+        <ul class="magnus-past-chats-list" id="magnus-past-chats-list"></ul>
+    </div>
+    <div class="magnus-panel-messages" id="magnus-messages"></div>
+    <?php
+    /** @var \Magnus\Assistant\Block\Adminhtml\SuggestedQuestions $suggestedQuestionsBlock */
+    $suggestedQuestionsBlock = $block->getLayout()->createBlock(\Magnus\Assistant\Block\Adminhtml\SuggestedQuestions::class);
+    $suggestedQuestions = $suggestedQuestionsBlock->getSuggestedQuestions();
+    ?>
+    <div class="magnus-suggested-questions-wrap" id="magnus-suggested-questions-wrap">
+        <button type="button" class="magnus-suggested-questions-nav magnus-suggested-questions-prev" id="magnus-suggested-prev" aria-label="<?= $escaper->escapeHtmlAttr(__('Previous questions')) ?>">&larr;</button>
+        <div class="magnus-suggested-questions" id="magnus-suggested-questions">
+            <div class="magnus-suggested-questions-track">
+                <?php foreach ($suggestedQuestions as $question): ?>
+                    <button type="button" class="magnus-suggested-question" data-question="<?= $escaper->escapeHtmlAttr($question['text']) ?>">
+                        <?= $escaper->escapeHtml($question['text']) ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <button type="button" class="magnus-suggested-questions-nav magnus-suggested-questions-next" id="magnus-suggested-next" aria-label="<?= $escaper->escapeHtmlAttr(__('Next questions')) ?>">&rarr;</button>
+    </div>
+    <div class="magnus-panel-input-wrap">
+        <textarea id="magnus-input" class="magnus-input" rows="2" placeholder="<?= $escaper->escapeHtmlAttr(__('Ask Magnus...')) ?>"></textarea>
+        <button type="button" id="magnus-send" class="magnus-send"><?= $escaper->escapeHtml(__('Send')) ?></button>
+    </div>
+</div>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Magnus_Assistant/js/chat-ui": {}
+    }
+}
+</script>

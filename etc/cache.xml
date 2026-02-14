@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+    <type name="magnus_assistant_knowledge" translate="label,description" instance="Magnus\Assistant\Model\Cache\Type\Knowledge">
+        <label>Magnus Assistant Instance Knowledge</label>
+        <description>Caches instance knowledge (modules, config schema) for Magnus. Invalidated on config change.</description>
+    </type>
+</config>

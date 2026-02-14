@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="magnus_assistant_conversation" resource="default" engine="innodb" comment="Magnus Assistant Conversation">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="int" name="admin_user_id" unsigned="true" nullable="false" comment="Admin User ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGNUS_CONVERSATION_ADMIN_USER_ID_ADMIN_USER_USER_ID"
+                    table="magnus_assistant_conversation" column="admin_user_id"
+                    referenceTable="admin_user" referenceColumn="user_id" onDelete="CASCADE"/>
+        <index referenceId="MAGNUS_ASSISTANT_CONVERSATION_ADMIN_USER_ID_UPDATED_AT"
+               indexType="btree">
+            <column name="admin_user_id"/>
+            <column name="updated_at"/>
+        </index>
+    </table>
+    <table name="magnus_assistant_message" resource="default" engine="innodb" comment="Magnus Assistant Message">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="int" name="conversation_id" unsigned="true" nullable="false" comment="Conversation ID"/>
+        <column xsi:type="varchar" name="role" nullable="false" length="32" comment="Role (user|assistant)"/>
+        <column xsi:type="text" name="content" nullable="false" comment="Content"/>
+        <column xsi:type="text" name="tool_context" nullable="true" comment="Tool calls and results (JSON) for assistant messages"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGNUS_MESSAGE_CONVERSATION_ID_CONVERSATION_ID"
+                    table="magnus_assistant_message" column="conversation_id"
+                    referenceTable="magnus_assistant_conversation" referenceColumn="id" onDelete="CASCADE"/>
+        <index referenceId="MAGNUS_ASSISTANT_MESSAGE_CONVERSATION_ID" indexType="btree">
+            <column name="conversation_id"/>
+        </index>
+    </table>
+    <table name="magnus_assistant_audit_log" resource="default" engine="innodb" comment="Magnus Assistant Audit Log (stub for approved actions)">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="int" name="admin_user_id" unsigned="true" nullable="false" comment="Admin User ID"/>
+        <column xsi:type="varchar" name="action" nullable="false" length="255" comment="Action"/>
+        <column xsi:type="text" name="details" nullable="true" comment="Details (JSON or text)"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGNUS_AUDIT_ADMIN_USER_ID_ADMIN_USER_USER_ID"
+                    table="magnus_assistant_audit_log" column="admin_user_id"
+                    referenceTable="admin_user" referenceColumn="user_id" onDelete="CASCADE"/>
+        <index referenceId="MAGNUS_ASSISTANT_AUDIT_LOG_ADMIN_USER_ID" indexType="btree">
+            <column name="admin_user_id"/>
+        </index>
+    </table>
+    <table name="magnus_assistant_pending_action" resource="default" engine="innodb" comment="Magnus Assistant Pending Action">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="ID"/>
+        <column xsi:type="int" name="conversation_id" unsigned="true" nullable="false" comment="Conversation ID"/>
+        <column xsi:type="varchar" name="action_type" nullable="false" length="255" comment="Action Type"/>
+        <column xsi:type="text" name="action_params" nullable="false" comment="Action Parameters (JSON)"/>
+        <column xsi:type="text" name="description" nullable="true" comment="Description"/>
+        <column xsi:type="text" name="preview_data" nullable="true" comment="Preview Data (JSON)"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MAGNUS_PENDING_ACTION_CONVERSATION_ID_CONVERSATION_ID"
+                    table="magnus_assistant_pending_action" column="conversation_id"
+                    referenceTable="magnus_assistant_conversation" referenceColumn="id" onDelete="CASCADE"/>
+        <index referenceId="MAGNUS_ASSISTANT_PENDING_ACTION_CONVERSATION_ID_CREATED_AT" indexType="btree">
+            <column name="conversation_id"/>
+            <column name="created_at"/>
+        </index>
+    </table>
+</schema>

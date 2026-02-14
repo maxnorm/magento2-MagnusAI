@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Magnus Assistant dedicated log file: var/log/magnus_assistant.log -->
+    <type name="Magnus\Assistant\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">Magnus_Assistant</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="magnus" xsi:type="object">Magnus\Assistant\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\App\Cache\Type\FrontendPool">
+        <arguments>
+            <argument name="typeFrontendMap" xsi:type="array">
+                <item name="magnus_assistant_knowledge" xsi:type="string">default</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <preference for="Magnus\Assistant\Api\ConversationRepositoryInterface" type="Magnus\Assistant\Model\ConversationRepository"/>
+    <preference for="Magnus\Assistant\Api\MessageRepositoryInterface" type="Magnus\Assistant\Model\MessageRepository"/>
+    <preference for="Magnus\Assistant\Model\Llm\LlmProviderInterface" type="Magnus\Assistant\Model\Llm\LlmProviderProxy"/>
+    <preference for="Magnus\Assistant\Api\ActionRegistryInterface" type="Magnus\Assistant\Model\Action\ActionRegistry"/>
+    <preference for="Magnus\Assistant\Api\ActionExecutorInterface" type="Magnus\Assistant\Model\Action\ActionExecutor"/>
+
+    <type name="Magnus\Assistant\Model\Llm\FunctionSchemaBuilder">
+        <arguments>
+            <argument name="tools" xsi:type="array">
+                <item name="how_do_i" xsi:type="object">Magnus\Assistant\Model\Tool\HowDoITool</item>
+                <item name="explain_config" xsi:type="object">Magnus\Assistant\Model\Tool\ConfigExplanationTool</item>
+                <item name="run_report" xsi:type="object">Magnus\Assistant\Model\Tool\ReportTool</item>
+                <item name="list_modules" xsi:type="object">Magnus\Assistant\Model\Tool\DemoModuleListTool</item>
+                <item name="greeting" xsi:type="object">Magnus\Assistant\Model\Tool\FallbackTool</item>
+                <item name="open_admin_page" xsi:type="object">Magnus\Assistant\Model\Tool\OpenAdminPageTool</item>
+                <item name="get_config_value" xsi:type="object">Magnus\Assistant\Model\Tool\GetConfigValueTool</item>
+                <item name="search_config_paths" xsi:type="object">Magnus\Assistant\Model\Tool\SearchConfigPathsTool</item>
+                <item name="search_products" xsi:type="object">Magnus\Assistant\Model\Tool\SearchProductsTool</item>
+                <item name="get_product_for_copy" xsi:type="object">Magnus\Assistant\Model\Tool\GetProductForCopyTool</item>
+                <item name="get_order_summary" xsi:type="object">Magnus\Assistant\Model\Tool\GetOrderSummaryTool</item>
+                <item name="list_admin_areas" xsi:type="object">Magnus\Assistant\Model\Tool\ListAdminAreasTool</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Tool\ToolExecutor">
+        <arguments>
+            <argument name="tools" xsi:type="array">
+                <item name="how_do_i" xsi:type="object">Magnus\Assistant\Model\Tool\HowDoITool</item>
+                <item name="explain_config" xsi:type="object">Magnus\Assistant\Model\Tool\ConfigExplanationTool</item>
+                <item name="run_report" xsi:type="object">Magnus\Assistant\Model\Tool\ReportTool</item>
+                <item name="list_modules" xsi:type="object">Magnus\Assistant\Model\Tool\DemoModuleListTool</item>
+                <item name="greeting" xsi:type="object">Magnus\Assistant\Model\Tool\FallbackTool</item>
+                <item name="open_admin_page" xsi:type="object">Magnus\Assistant\Model\Tool\OpenAdminPageTool</item>
+                <item name="get_config_value" xsi:type="object">Magnus\Assistant\Model\Tool\GetConfigValueTool</item>
+                <item name="search_config_paths" xsi:type="object">Magnus\Assistant\Model\Tool\SearchConfigPathsTool</item>
+                <item name="search_products" xsi:type="object">Magnus\Assistant\Model\Tool\SearchProductsTool</item>
+                <item name="get_product_for_copy" xsi:type="object">Magnus\Assistant\Model\Tool\GetProductForCopyTool</item>
+                <item name="get_order_summary" xsi:type="object">Magnus\Assistant\Model\Tool\GetOrderSummaryTool</item>
+                <item name="list_admin_areas" xsi:type="object">Magnus\Assistant\Model\Tool\ListAdminAreasTool</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Chat\PromptBuilder">
+        <arguments>
+            <argument name="functionSchemaBuilder" xsi:type="object">Magnus\Assistant\Model\Llm\FunctionSchemaBuilder</argument>
+            <argument name="actionProposalHandler" xsi:type="object">Magnus\Assistant\Model\Action\ActionProposalHandler</argument>
+            <argument name="discoveryProvider" xsi:type="object">Magnus\Assistant\Model\Instance\DiscoveryProvider</argument>
+            <argument name="json" xsi:type="object">Magento\Framework\Serialize\Serializer\Json</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Chat\ChatService">
+        <arguments>
+            <argument name="functionSchemaBuilder" xsi:type="object">Magnus\Assistant\Model\Llm\FunctionSchemaBuilder</argument>
+            <argument name="toolExecutor" xsi:type="object">Magnus\Assistant\Model\Tool\ToolExecutor</argument>
+            <argument name="responseParser" xsi:type="object">Magnus\Assistant\Model\Chat\LlmResponseParser</argument>
+            <argument name="actionProposalHandler" xsi:type="object">Magnus\Assistant\Model\Action\ActionProposalHandler</argument>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Report\ReportHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="top_products_revenue" xsi:type="object">Magnus\Assistant\Model\Report\Handler\TopProductsRevenueHandler</item>
+                <item name="revenue_aov_orders" xsi:type="object">Magnus\Assistant\Model\Report\Handler\RevenueAovOrdersHandler</item>
+                <item name="missing_images" xsi:type="object">Magnus\Assistant\Model\Report\Handler\MissingImagesHandler</item>
+                <item name="low_stock" xsi:type="object">Magnus\Assistant\Model\Report\Handler\LowStockHandler</item>
+                <item name="slow_moving" xsi:type="object">Magnus\Assistant\Model\Report\Handler\SlowMovingHandler</item>
+                <item name="product_count" xsi:type="object">Magnus\Assistant\Model\Report\Handler\ProductCountHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Report\Handler\TopProductsRevenueHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Model\Report\Handler\RevenueAovOrdersHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Model\Report\Handler\MissingImagesHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Model\Report\Handler\LowStockHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Model\Report\Handler\SlowMovingHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Magnus\Assistant\Model\Report\Handler\ProductCountHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Tool\ReportTool">
+        <arguments>
+            <argument name="handlerPool" xsi:type="object">Magnus\Assistant\Model\Report\ReportHandlerPool</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Action\ActionTypeRegistry">
+        <arguments>
+            <argument name="actionMap" xsi:type="array">
+                <item name="config_update" xsi:type="string">Magnus\Assistant\Model\Action\ConfigUpdateAction</item>
+                <item name="catalog_price_rule_create" xsi:type="string">Magnus\Assistant\Model\Action\CatalogPriceRuleCreateAction</item>
+                <item name="product_copy_apply" xsi:type="string">Magnus\Assistant\Model\Action\ProductCopyApplyAction</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Action\ActionProposalHandler">
+        <arguments>
+            <argument name="objectManager" xsi:type="object">Magento\Framework\ObjectManagerInterface</argument>
+            <argument name="json" xsi:type="object">Magento\Framework\Serialize\Serializer\Json</argument>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+            <argument name="actionTypeRegistry" xsi:type="object">Magnus\Assistant\Model\Action\ActionTypeRegistry</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Llm\OpenAIProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+
+    <type name="Magnus\Assistant\Model\Llm\OpenRouterProvider">
+        <arguments>
+            <argument name="logger" xsi:type="object">Magnus\Assistant\Logger\Logger</argument>
+        </arguments>
+    </type>
+</config>

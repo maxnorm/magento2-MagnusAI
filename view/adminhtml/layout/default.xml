@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Magnus_Assistant::css/magnus.css"/>
+    </head>
+    <body>
+        <!--
+        Header uses float:right (search-global, notifications-wrapper, admin-user).
+        Visual order is REVERSE of DOM: first in DOM = rightmost.
+        Desired visual: Search | Trigger | Notification | User
+        => DOM order: user, notification, trigger, search
+        -->
+        <referenceContainer name="header.inner.right">
+            <block class="Magnus\Assistant\Block\Adminhtml\Trigger" name="magnus.assistant.trigger"
+                   template="Magnus_Assistant::trigger.phtml" after="notification.messages" before="global.search"
+                   aclResource="Magnus_Assistant::assistant"/>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magnus\Assistant\Block\Adminhtml\ChatPanel" name="magnus.assistant.chat.panel"
+                   template="Magnus_Assistant::chat_panel.phtml" aclResource="Magnus_Assistant::assistant"/>
+        </referenceContainer>
+    </body>
+</page>

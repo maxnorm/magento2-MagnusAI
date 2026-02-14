@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magnus" translate="label" sortOrder="100">
+            <label>Magnus AI Assistant</label>
+        </tab>
+        <section id="magnus" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+            <class>separator-top</class>
+            <label>Settings</label>
+            <tab>magnus</tab>
+            <resource>Magnus_Assistant::assistant</resource>
+            <group id="assistant" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Assistant Settings</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1">
+                    <label>Enable Magnus</label>
+                    <comment>Show the Magnus chat panel in admin and allow sending messages.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="provider" translate="label comment" type="select" sortOrder="20" showInDefault="1">
+                    <label>LLM Provider</label>
+                    <source_model>Magnus\Assistant\Model\Config\Source\LlmProvider</source_model>
+                </field>
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="30" showInDefault="1">
+                    <label>API Key</label>
+                    <comment>API key for the selected LLM provider</comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="openrouter_model" translate="label comment" type="text" sortOrder="35" showInDefault="1">
+                    <label>OpenRouter Model</label>
+                    <comment>Model to use with OpenRouter. Recommended: google/gemini-flash-1.5 (reliable, free tier). See all models at <a href="https://openrouter.ai/models" target="_blank">https://openrouter.ai/models</a></comment>
+                    <depends>
+                        <field id="enabled">1</field>
+                        <field id="provider">openrouter</field>
+                    </depends>
+                </field>
+                <field id="rate_limit_per_minute" translate="label comment" type="text" sortOrder="40" showInDefault="1">
+                    <label>Rate Limit (requests per minute)</label>
+                    <comment>Max LLM requests per admin user per minute. Leave empty for no limit.</comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="use_instance_knowledge" translate="label comment" type="select" sortOrder="50" showInDefault="1">
+                    <label>Use Instance Knowledge in Prompts</label>
+                    <comment>Inject store modules and config schema context into LLM prompts.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="use_function_calling" translate="label comment" type="select" sortOrder="55" showInDefault="1">
+                    <label>Use function calling (tools)</label>
+                    <comment>When enabled, the LLM can use tools (reports, config lookup, etc.). Requires a model that supports tool use (e.g. on OpenRouter see <a href="https://openrouter.ai/models?supported_parameters=tools" target="_blank">models with tool support</a>). Disable to use any model (e.g. free models like meta-llama/llama-3.2-3b-instruct:free).</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="enable_dev_error_details" translate="label comment" type="select" sortOrder="70" showInDefault="1">
+                    <label>Enable Dev Error Details</label>
+                    <comment>When enabled, detailed error information (stack traces, file paths, etc.) will be displayed in the chat interface. Useful for debugging.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

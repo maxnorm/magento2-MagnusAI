@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <magnus>
+            <assistant>
+                <enabled>0</enabled>
+                <provider>openai</provider>
+                <openrouter_model>google/gemini-flash-1.5</openrouter_model>
+                <rate_limit_per_minute>60</rate_limit_per_minute>
+                <use_instance_knowledge>1</use_instance_knowledge>
+                <use_function_calling>0</use_function_calling>
+                <enable_dev_error_details>0</enable_dev_error_details>
+            </assistant>
+        </magnus>
+    </default>
+</config>
